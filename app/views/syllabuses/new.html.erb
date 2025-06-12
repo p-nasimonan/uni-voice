@@ -1,0 +1,70 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-2xl mx-auto">
+    <div class="mb-4">
+      <%= link_to '← 大学ページに戻る', university_path(@university), class: 'text-decoration-none' %>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <h1 class="card-title mb-4">新規シラバス投稿</h1>
+
+        <%= form_with(model: [@university, @syllabus], local: true) do |f| %>
+          <% if @syllabus.errors.any? %>
+            <div class="alert alert-danger">
+              <h2><%= pluralize(@syllabus.errors.count, "error") %> prohibited this syllabus from being saved:</h2>
+              <ul>
+                <% @syllabus.errors.full_messages.each do |msg| %>
+                  <li><%= msg %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <div class="mb-3">
+            <%= f.label :title, 'タイトル', class: 'form-label' %>
+            <%= f.text_field :title, class: 'form-control' %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :faculty, '学部', class: 'form-label' %>
+            <%= f.text_field :faculty, class: 'form-control' %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :department, '学科', class: 'form-label' %>
+            <%= f.text_field :department, class: 'form-control' %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :professor, '担当教員', class: 'form-label' %>
+            <%= f.text_field :professor, class: 'form-control' %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :year, '年度', class: 'form-label' %>
+            <%= f.number_field :year, class: 'form-control' %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :semester, '学期', class: 'form-label' %>
+            <%= f.select :semester, ['前期', '後期', '通年'], {}, class: 'form-select' %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :credits, '単位数', class: 'form-label' %>
+            <%= f.number_field :credits, class: 'form-control' %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :content, 'シラバス内容', class: 'form-label' %>
+            <%= f.text_area :content, class: 'form-control', rows: 10 %>
+          </div>
+
+          <div class="d-grid gap-2">
+            <%= f.submit '投稿する', class: 'btn btn-primary' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

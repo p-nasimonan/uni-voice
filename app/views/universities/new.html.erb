@@ -1,0 +1,25 @@
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <div class="mb-4">
+      <%= link_to '← 一覧に戻る', universities_path, class: 'text-decoration-none' %>
+    </div>
+
+    <h1 class="mb-4">大学の新規登録</h1>
+
+    <%= form_with(model: @university) do |f| %>
+      <div class="mb-3">
+        <%= f.label :name, '大学名', class: 'form-label' %>
+        <%= f.text_field :name, class: 'form-control' %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :email_domain, 'メールアドレスのドメイン(例: u-ryukyu.ac.jp)', class: 'form-label' %>
+        <%= f.text_field :email_domain, class: 'form-control' %>
+      </div>
+
+      <div class="text-end">
+        <%= f.submit '登録する', class: 'btn btn-primary' %>
+      </div>
+    <% end %>
+  </div>
+</div>

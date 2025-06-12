@@ -1,0 +1,33 @@
+<div class="mb-4">
+  <%= link_to '← 一覧に戻る', universities_path, class: 'text-decoration-none' %>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h1 class="card-title"><%= @university.name %></h1>
+  </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2>シラバス一覧</h2>
+  <%= link_to '新規投稿', new_university_syllabus_path(@university), class: 'btn btn-primary' %>
+</div>
+
+<div class="row">
+  <% @syllabuses.each do |syllabus| %>
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title"><%= syllabus.title %></h5>
+          <p class="card-text text-muted">
+            <%= syllabus.faculty %> <%= syllabus.department %><br>
+            担当教員: <%= syllabus.professor %><br>
+            <%= syllabus.year %>年度 <%= syllabus.semester %> <%= syllabus.credits %>単位
+          </p>
+          <p class="card-text"><%= truncate(syllabus.content, length: 100) %></p>
+          <%= link_to '詳細', university_syllabus_path(@university, syllabus), class: 'btn btn-outline-primary' %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

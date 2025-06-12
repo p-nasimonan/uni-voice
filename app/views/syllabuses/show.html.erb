@@ -1,0 +1,27 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="bg-white shadow rounded-lg p-6">
+    <div class="mb-4">
+      <%= link_to '← 大学ページに戻る', university_path(@university), class: 'text-decoration-none' %>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <h1 class="card-title"><%= @syllabus.title %></h1>
+        <p class="card-text text-muted">
+          <%= @university.name %><br>
+          <%= @syllabus.faculty %> <%= @syllabus.department %><br>
+          担当教員: <%= @syllabus.professor %><br>
+          <%= @syllabus.year %>年度 <%= @syllabus.semester %> <%= @syllabus.credits %>単位
+        </p>
+        <div class="card-text">
+          <%= simple_format(@syllabus.content) %>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-between">
+      <%= link_to '編集', edit_university_syllabus_path(@university, @syllabus), class: 'btn btn-outline-primary' %>
+      <%= button_to '削除', university_syllabus_path(@university, @syllabus), method: :delete, class: 'btn btn-outline-danger', data: { confirm: '本当に削除しますか？' } %>
+    </div>
+  </div>
+</div>
