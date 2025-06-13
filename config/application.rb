@@ -6,6 +6,9 @@ require "rails/all"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# Load environment variables from .env file
+Dotenv::Rails.load if ['development', 'test'].include? ENV['RAILS_ENV']
+
 module UniVoice
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
