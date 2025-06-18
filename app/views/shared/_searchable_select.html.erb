@@ -1,0 +1,28 @@
+<%# 
+  @param {String} name - フォームのフィールド名
+  @param {Array} items - 選択肢の配列（[表示名, 値]の形式）
+  @param {String} placeholder - プレースホルダーテキスト
+  @param {String} add_url - 追加ページのURL
+%>
+
+<div data-controller="searchable-select"
+     data-searchable-select-items-value="<%= items.to_json %>"
+     data-searchable-select-placeholder-value="<%= placeholder %>"
+     data-searchable-select-add-url-value="<%= add_url %>"
+     class="relative">
+  
+  <%# 実際のフォームフィールド（非表示） %>
+  <%= hidden_field_tag name, nil, data: { searchable_select_target: "selected" } %>
+  
+  <%# 検索入力フィールド %>
+  <input type="text"
+         data-searchable-select-target="input"
+         data-action="input->searchable-select#search focus->searchable-select#toggleList"
+         placeholder="<%= placeholder %>"
+         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+  
+  <%# ドロップダウンリスト %>
+  <div data-searchable-select-target="list"
+       class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto hidden">
+  </div>
+</div> 

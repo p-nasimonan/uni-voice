@@ -1,13 +1,13 @@
 Rails.application.routes.draw do
-  root 'universities#index'
+  root 'home#index'
+  get 'home/index'
   
   resources :universities do
-    resources :syllabuses do
-      collection do
-        get 'search'
-      end
-    end
+    resources :syllabuses
   end
+  
+  get 'search', to: 'syllabuses#search', as: 'search_syllabuses'
+  
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

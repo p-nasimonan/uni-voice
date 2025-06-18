@@ -1,0 +1,94 @@
+<%# 
+  @fileoverview シラバス検索結果画面
+  @description 検索結果の表示と、結果がない場合の追加ボタンを表示
+%>
+
+<div class="container mx-auto px-4 py-8">
+  <%# 検索フォーム %>
+  <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+    <%= form_with url: search_syllabuses_path, method: :get, class: "space-y-4" do |f| %>
+      <div class="flex gap-4">
+        <div class="flex-1">
+          <%= f.text_field :query, 
+              value: params[:query],
+              placeholder: "講義名や教授名で検索", 
+              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+        <%# 大学選択%>
+        <div class="mb-4">
+        <select name="university_id" id="university" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+            <option value="">大学を選択してください</option>
+            <% @universities.each do |university| %>
+            <option value="<%= university.id %>"><%= university.name %></option>
+            <% end %>
+        </select>
+        </div>
+        
+        <div>
+          <%= f.submit "検索", 
+              class: "px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <%# 検索条件の表示 %>
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-gray-800 mb-4">検索結果</h1>
+    <div class="bg-white rounded-lg shadow p-4">
+      <p class="text-gray-600">
+        <% if params[:query].present? %>
+          検索キーワード: <span class="font-semibold"><%= params[:query] %></span>
+        <% end %>
+        <% if params[:university_id].present? %>
+          <% university = University.find(params[:university_id]) %>
+          大学: <span class="font-semibold"><%= university.name %></span>
+        <% end %>
+      </p>
+    </div>
+  </div>
+
+  <%# 検索結果 %>
+  <div class="mb-8">
+    <% if @syllabuses.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @syllabuses.each do |syllabus| %>
+          <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+            <h2 class="text-xl font-semibold mb-2"><%= syllabus.title %></h2>
+            <p class="text-gray-600 mb-2"><%= syllabus.university.name %></p>
+            <div class="text-sm text-gray-500 mb-4">
+              <p><%= syllabus.professor %> | <%= syllabus.credits %>単位</p>
+              <p><%= syllabus.faculty %> <%= syllabus.department %></p>
+            </div>
+            <%= link_to "詳細を見る", 
+                university_syllabus_path(syllabus.university, syllabus),
+                class: "inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" %>
+          </div>
+        <% end %>
+      </div>
+
+      <%# ページネーション %>
+      <div class="mt-8">
+        <%= paginate @syllabuses, theme: 'tailwind' %>
+      </div>
+    <% else %>
+      <%# 検索結果がない場合 %>
+      <div class="text-center py-12">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">
+          検索結果が見つかりませんでした
+        </h3>
+        <p class="text-gray-500 mb-6">
+          別のキーワードで検索するか、新しいシラバスを追加してください。
+        </p>
+        <% if params[:university_id].present? %>
+          <%= link_to "シラバスを追加する", 
+              new_university_syllabus_path(params[:university_id]),
+              class: "inline-block px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600" %>
+        <% else %>
+          <p class="text-gray-500">
+            大学を選択してください
+          </p>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div> 

@@ -1,4 +1,20 @@
-<div>
-  <h1 class="font-bold text-4xl">Universities#create</h1>
-  <p>Find me in app/views/universities/create.html.erb</p>
+<%# 大学作成完了画面 %>
+<div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-3xl mx-auto">
+    <div class="bg-white shadow rounded-lg p-8">
+      <div class="text-center">
+        <svg class="mx-auto h-12 w-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        <h2 class="mt-4 text-2xl font-bold text-gray-900">大学の登録が完了しました</h2>
+        <p class="mt-2 text-gray-600">
+          新しい大学が正常に登録されました。
+        </p>
+        <div class="mt-6 space-x-4">
+          <%= link_to "大学一覧に戻る", universities_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" %>
+          <%= link_to "新しい大学を追加", new_university_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" %>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

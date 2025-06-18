@@ -1,25 +1,42 @@
-<div class="row">
-  <div class="col-md-8 offset-md-2">
-    <div class="mb-4">
-      <%= link_to '← 一覧に戻る', universities_path, class: 'text-decoration-none' %>
+<%# 大学新規登録フォーム %>
+<div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-3xl">
+    <div class="mb-6">
+      <%= link_to universities_path, class: "inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900" do %>
+        一覧に戻る
+      <% end %>
     </div>
 
-    <h1 class="mb-4">大学の新規登録</h1>
+    <div class="bg-white shadow rounded-lg p-8">
+      <h1 class="text-2xl font-bold text-gray-900 mb-8">大学の新規登録</h1>
 
-    <%= form_with(model: @university) do |f| %>
-      <div class="mb-3">
-        <%= f.label :name, '大学名', class: 'form-label' %>
-        <%= f.text_field :name, class: 'form-control' %>
-      </div>
+      <%= form_with(model: @university, class: "space-y-6") do |f| %>
+        <div>
+          <%= f.label :name, '大学名', class: "block text-sm font-medium text-gray-700" %>
+          <div class="mt-1 mb-4">
+            <%= f.text_field :name, 
+                class: "shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md",
+                placeholder: "例：琉球大学" %>
+          </div>
+        </div>
 
-      <div class="mb-3">
-        <%= f.label :email_domain, 'メールアドレスのドメイン(例: u-ryukyu.ac.jp)', class: 'form-label' %>
-        <%= f.text_field :email_domain, class: 'form-control' %>
-      </div>
+        <div>
+          <%= f.label :email_domain, 'メールアドレスのドメイン', class: "block text-sm font-medium text-gray-700" %>
+          <div class="mt-1 mb-4">
+            <%= f.text_field :email_domain, 
+                class: "shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md",
+                placeholder: "例：u-ryukyu.ac.jp" %>
+            <p class="mt-2 text-sm text-gray-500 mb-4">
+            学生のメールアドレスのドメイン部分を入力してください
+            </p>
+          </div>
+        </div>
 
-      <div class="text-end">
-        <%= f.submit '登録する', class: 'btn btn-primary' %>
-      </div>
-    <% end %>
+        <div class="flex justify-end">
+          <%= f.submit '登録する', 
+              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+        </div>
+      <% end %>
+    </div>
   </div>
 </div>

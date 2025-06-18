@@ -1,5 +1,5 @@
 class SyllabusesController < ApplicationController
-  before_action :set_university
+  before_action :set_university, except: [:search]
   before_action :set_syllabus, only: [:show, :edit, :update, :destroy]
 
   def index
@@ -39,9 +39,28 @@ class SyllabusesController < ApplicationController
   end
 
   def search
-    @syllabuses = @university.syllabuses.where('title LIKE ? OR content LIKE ? OR course_name LIKE ? OR professor LIKE ?',
-      "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%")
-    render :index
+    @universities = University.all.order(:name)
+    @syllabuses = Syllabus.includes(:university)
+    
+    # 検索クエリがある場合
+    if params[:query].present?
+      @syllabuses = @syllabuses.where(
+        "title ILIKE :query OR professor ILIKE :query",
+        query: "%#{params[:query]}%"
+      )
+    end
+    
+    # 大学が選択されている場合
+    if params[:university_id].present?
+      @syllabuses = @syllabuses.where(university_id: params[:university_id])
+    end
+    
+    @syllabuses = @syllabuses.page(params[:page]).per(12)
+    
+    respond_to do |format|
+      format.html
+      format.json { render json: @syllabuses }
+    end
   end
 
   private
@@ -57,4 +76,5 @@ class SyllabusesController < ApplicationController
   def syllabus_params
     params.require(:syllabus).permit(:title, :content, :faculty, :department, :course_name, :professor, :year, :semester, :credits)
   end
+  
 end
