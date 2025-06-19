@@ -7,3 +7,8 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+# 琉球大学のデータを追加
+University.find_or_create_by!(name: '琉球大学') do |university|
+  university.email_domain = 'u-ryukyu.ac.jp'
+end

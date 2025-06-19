@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_18_062304) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_19_023042) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -18,9 +18,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_18_062304) do
     t.string "title"
     t.text "content"
     t.string "university"
-    t.string "faculty"
-    t.string "department"
-    t.string "course_name"
     t.string "professor"
     t.integer "year"
     t.string "semester"
@@ -28,6 +25,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_18_062304) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "university_id", null: false
+    t.string "url"
+    t.string "course_number"
+    t.string "faculty_department"
+    t.string "day_period"
     t.index ["university_id"], name: "index_syllabuses_on_university_id"
   end
 

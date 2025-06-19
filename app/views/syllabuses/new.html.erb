@@ -1,70 +1,216 @@
-<div class="container mx-auto px-4 py-8">
-  <div class="max-w-2xl mx-auto">
-    <div class="mb-4">
-      <%= link_to '← 大学ページに戻る', university_path(@university), class: 'text-decoration-none' %>
+<%# @fileoverview 新規シラバス投稿画面 %>
+<%# @description 新しいシラバスを投稿するためのフォームを表示します %>
+
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- 法的免責事項 -->
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-yellow-800">免責事項</h3>
+          <div class="mt-2 text-sm text-yellow-700">
+            <p>自動取得機能の使用は自己責任で行ってください。以下の点にご注意ください：</p>
+            <ul class="list-disc pl-5 mt-2 space-y-1">
+              <li>著作権や利用規約を確認してください</li>
+              <li>過度なアクセスは避けてください</li>
+              <li>取得した情報の使用は適切に行ってください</li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="card">
-      <div class="card-body">
-        <h1 class="card-title mb-4">新規シラバス投稿</h1>
+    <!-- メインカード -->
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h1 class="text-2xl font-bold text-gray-900">新規シラバス投稿</h1>
+        <p class="mt-1 text-sm text-gray-600"><%= @university.name %>のシラバスを投稿します</p>
+      </div>
 
-        <%= form_with(model: [@university, @syllabus], local: true) do |f| %>
+      <div class="p-6">
+        <%= form_with(model: [@university, @syllabus], local: true, class: "space-y-6") do |f| %>
+          <!-- エラーメッセージ -->
           <% if @syllabus.errors.any? %>
-            <div class="alert alert-danger">
-              <h2><%= pluralize(@syllabus.errors.count, "error") %> prohibited this syllabus from being saved:</h2>
-              <ul>
-                <% @syllabus.errors.full_messages.each do |msg| %>
-                  <li><%= msg %></li>
-                <% end %>
-              </ul>
+            <div class="bg-red-50 border border-red-200 rounded-md p-4">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg class="h-4 w-4 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-red-800">
+                    <%= pluralize(@syllabus.errors.count, "error") %> prohibited this syllabus from being saved:
+                  </h3>
+                  <div class="mt-2 text-sm text-red-700">
+                    <ul class="list-disc pl-5 space-y-1">
+                      <% @syllabus.errors.full_messages.each do |msg| %>
+                        <li><%= msg %></li>
+                      <% end %>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </div>
           <% end %>
 
-          <div class="mb-3">
-            <%= f.label :title, 'タイトル', class: 'form-label' %>
-            <%= f.text_field :title, class: 'form-control' %>
+          <!-- URL -->
+          <div class="mb-4">
+            <%= f.label :url, 'シラバスURL', class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <div class="flex space-x-2">
+              <%= f.url_field :url, class: "flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500", placeholder: "https://example.com/syllabus" %>
+              <button type="button" id="auto-fill-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors hidden">
+                <div class="flex items-center">
+                  <div class="transform scale-75 mr-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                  </div>
+                  自動取得
+                </div>
+              </button>
+            </div>
+            <p class="mt-1 text-sm text-gray-500">大学のシラバスページのURLを入力してください</p>
           </div>
 
-          <div class="mb-3">
-            <%= f.label :faculty, '学部', class: 'form-label' %>
-            <%= f.text_field :faculty, class: 'form-control' %>
+          <!-- タイトル -->
+          <div>
+            <%= f.label :title, 'タイトル', class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.text_field :title, class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500", placeholder: "シラバスのタイトルを入力してください" %>
           </div>
 
-          <div class="mb-3">
-            <%= f.label :department, '学科', class: 'form-label' %>
-            <%= f.text_field :department, class: 'form-control' %>
+          <!-- 科目番号 -->
+          <div>
+            <%= f.label :course_number, '科目番号', class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.text_field :course_number, class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500", placeholder: "例：知能102" %>
           </div>
 
-          <div class="mb-3">
-            <%= f.label :professor, '担当教員', class: 'form-label' %>
-            <%= f.text_field :professor, class: 'form-control' %>
+          <!-- 学部・学科 -->
+          <div>
+            <%= f.label :faculty_department, '学部・学科', class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.text_field :faculty_department, class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500", placeholder: "例：工学部工学科" %>
           </div>
 
-          <div class="mb-3">
-            <%= f.label :year, '年度', class: 'form-label' %>
-            <%= f.number_field :year, class: 'form-control' %>
+          <!-- 担当教員 -->
+          <div>
+            <%= f.label :professor, '担当教員', class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.text_field :professor, class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500", placeholder: "担当教員名を入力してください" %>
           </div>
 
-          <div class="mb-3">
-            <%= f.label :semester, '学期', class: 'form-label' %>
-            <%= f.select :semester, ['前期', '後期', '通年'], {}, class: 'form-select' %>
+          <!-- 年度・学期・曜日時限・単位数 -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div>
+              <%= f.label :year, '年度', class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= f.number_field :year, class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500", placeholder: "2024", min: 2000, max: 2030 %>
+            </div>
+            <div>
+              <%= f.label :semester, '学期', class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= f.text_field :semester, class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500", placeholder: "前期" %>
+            </div>
+            <div>
+              <%= f.label :day_period, '曜日時限', class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= f.text_field :day_period, class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500", placeholder: "例：火2" %>
+            </div>
+            <div>
+              <%= f.label :credits, '単位数', class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= f.number_field :credits, class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500", placeholder: "2", min: 1, max: 10, step: 0.5 %>
+            </div>
           </div>
 
-          <div class="mb-3">
-            <%= f.label :credits, '単位数', class: 'form-label' %>
-            <%= f.number_field :credits, class: 'form-control' %>
+          <!-- シラバス内容 -->
+          <div>
+            <%= f.label :content, 'シラバス内容', class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= f.text_area :content, rows: 10, class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500", placeholder: "授業の概要、到達目標、授業計画などを入力してください" %>
           </div>
 
-          <div class="mb-3">
-            <%= f.label :content, 'シラバス内容', class: 'form-label' %>
-            <%= f.text_area :content, class: 'form-control', rows: 10 %>
-          </div>
-
-          <div class="d-grid gap-2">
-            <%= f.submit '投稿する', class: 'btn btn-primary' %>
+          <!-- 送信ボタン -->
+          <div class="flex justify-end pt-6 border-t border-gray-200">
+            <%= f.submit '投稿する', class: "inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors" %>
           </div>
         <% end %>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const urlField = document.querySelector('input[name="syllabus[url]"]');
+  const autoFillBtn = document.getElementById('auto-fill-btn');
+  const titleField = document.querySelector('input[name="syllabus[title]"]');
+  const courseNumberField = document.querySelector('input[name="syllabus[course_number]"]');
+  const facultyDepartmentField = document.querySelector('input[name="syllabus[faculty_department]"]');
+  const professorField = document.querySelector('input[name="syllabus[professor]"]');
+  const yearField = document.querySelector('input[name="syllabus[year]"]');
+  const semesterField = document.querySelector('select[name="syllabus[semester]"]');
+  const dayPeriodField = document.querySelector('input[name="syllabus[day_period]"]');
+  const creditsField = document.querySelector('input[name="syllabus[credits]"]');
+  const contentField = document.querySelector('textarea[name="syllabus[content]"]');
+  
+  // URLフィールドの変更を監視
+  urlField.addEventListener('input', function() {
+    if (this.value.trim() !== '') {
+      autoFillBtn.classList.remove('hidden');
+    } else {
+      autoFillBtn.classList.add('hidden');
+    }
+  });
+  
+  // 自動取得ボタンのクリックイベント
+  autoFillBtn.addEventListener('click', function() {
+    const url = urlField.value.trim();
+    if (url) {
+      // 確認ダイアログ
+      if (confirm('シラバス情報を自動取得しますか？\n\n※ この機能の使用は自己責任です。\n※ 著作権や利用規約を確認してください。')) {
+        // ボタンを無効化
+        autoFillBtn.disabled = true;
+        autoFillBtn.innerHTML = '<div class="flex items-center"><div class="transform scale-75 mr-1"><svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg></div>取得中...</div>';
+        
+        // スクレイピングAPIを呼び出し
+        fetch('<%= scrape_university_syllabuses_path(@university) %>', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          },
+          body: JSON.stringify({ url: url })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // 取得したデータをフォームに設定
+            if (data.data.title) titleField.value = data.data.title;
+            if (data.data.course_number) courseNumberField.value = data.data.course_number;
+            if (data.data.faculty_department) facultyDepartmentField.value = data.data.faculty_department;
+            if (data.data.professor) professorField.value = data.data.professor;
+            if (data.data.year) yearField.value = data.data.year;
+            if (data.data.semester) semesterField.value = data.data.semester;
+            if (data.data.day_period) dayPeriodField.value = data.data.day_period;
+            if (data.data.credits) creditsField.value = data.data.credits;
+            if (data.data.content) contentField.value = data.data.content;
+            
+            alert('シラバス情報を自動取得しました。内容を確認してから投稿してください。');
+          } else {
+            alert('エラー: ' + (data.error || '不明なエラーが発生しました'));
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('スクレイピングに失敗しました: ' + error.message);
+        })
+        .finally(() => {
+          // ボタンを元に戻す
+          autoFillBtn.disabled = false;
+          autoFillBtn.innerHTML = '<div class="flex items-center"><div class="transform scale-75 mr-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>自動取得</div>';
+        });
+      }
+    }
+  });
+});
+</script>

@@ -1,33 +1,65 @@
-<div class="mb-4">
-  <%= link_to '← 一覧に戻る', universities_path, class: 'text-decoration-none' %>
-</div>
-
-<div class="card mb-4">
-  <div class="card-body">
-    <h1 class="card-title"><%= @university.name %></h1>
-  </div>
-</div>
-
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <h2>シラバス一覧</h2>
-  <%= link_to '新規投稿', new_university_syllabus_path(@university), class: 'btn btn-primary' %>
-</div>
-
-<div class="row">
-  <% @syllabuses.each do |syllabus| %>
-    <div class="col-md-6 mb-4">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title"><%= syllabus.title %></h5>
-          <p class="card-text text-muted">
-            <%= syllabus.faculty %> <%= syllabus.department %><br>
-            担当教員: <%= syllabus.professor %><br>
-            <%= syllabus.year %>年度 <%= syllabus.semester %> <%= syllabus.credits %>単位
-          </p>
-          <p class="card-text"><%= truncate(syllabus.content, length: 100) %></p>
-          <%= link_to '詳細', university_syllabus_path(@university, syllabus), class: 'btn btn-outline-primary' %>
-        </div>
-      </div>
+<%# 大学詳細画面 %>
+<div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <%# 戻るリンク %>
+    <div class="mb-8">
+      <%= link_to universities_path, class: "inline-flex items-center text-gray-600 hover:text-gray-900" do %>
+        <svg width="20" height="20" class="mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        一覧に戻る
+      <% end %>
     </div>
-  <% end %>
+
+    <%# 大学情報 %>
+    <div class="bg-white shadow rounded-lg p-6 mb-8">
+      <h1 class="text-3xl font-bold text-gray-900"><%= @university.name %></h1>
+    </div>
+
+    <%# シラバス一覧ヘッダー %>
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-gray-900">シラバス一覧</h2>
+      <%= link_to new_university_syllabus_path(@university), class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" do %>
+        <svg width="20" height="20" class="mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+        新規投稿
+      <% end %>
+    </div>
+
+    <%# シラバス一覧 %>
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <% @syllabuses.each do |syllabus| %>
+        <div class="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow duration-300">
+          <div class="p-6">
+            <h3 class="text-xl font-semibold text-gray-900 mb-2"><%= syllabus.title %></h3>
+            <div class="text-sm text-gray-500 space-y-2 mb-4">
+              <div class="flex items-center">
+                <svg width="16" height="16" class="mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <%= syllabus.professor %>
+              </div>
+              <div class="flex items-center">
+                <svg width="16" height="16" class="mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <%= syllabus.year %>年度 <%= syllabus.semester %> <%= syllabus.day_period %>
+              </div>
+              <div class="flex items-center">
+                <svg width="16" height="16" class="mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+                <%= syllabus.credits %>単位
+              </div>
+            </div>
+            <p class="text-gray-600 mb-4"><%= truncate(syllabus.content, length: 100) %></p>
+            <%= link_to university_syllabus_path(@university, syllabus), class: "inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" do %>
+              詳細を見る
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
 </div>

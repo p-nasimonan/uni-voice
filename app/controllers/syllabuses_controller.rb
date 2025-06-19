@@ -1,3 +1,6 @@
+# @fileoverview シラバスコントローラー
+# @description シラバスのCRUD操作を管理します
+
 class SyllabusesController < ApplicationController
   before_action :set_university, except: [:search]
   before_action :set_syllabus, only: [:show, :edit, :update, :destroy]
@@ -15,10 +18,12 @@ class SyllabusesController < ApplicationController
 
   def create
     @syllabus = @university.syllabuses.build(syllabus_params)
+    
     if @syllabus.save
-      redirect_to [@university, @syllabus], notice: 'シラバスが正常に投稿されました。'
+      redirect_to university_syllabus_path(@university, @syllabus), notice: 'シラバスが正常に作成されました。'
     else
-      render :new
+      Rails.logger.error "Syllabus creation failed: #{@syllabus.errors.full_messages}"
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -27,39 +32,53 @@ class SyllabusesController < ApplicationController
 
   def update
     if @syllabus.update(syllabus_params)
-      redirect_to [@university, @syllabus], notice: 'シラバスが正常に更新されました。'
+      redirect_to university_syllabus_path(@university, @syllabus), notice: 'シラバスが正常に更新されました。'
     else
-      render :edit
+      render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
     @syllabus.destroy
-    redirect_to university_syllabuses_path(@university), notice: 'シラバスが正常に削除されました。'
+    redirect_to university_path(@university), notice: 'シラバスが正常に削除されました。'
   end
 
   def search
     @universities = University.all.order(:name)
     @syllabuses = Syllabus.includes(:university)
     
-    # 検索クエリがある場合
     if params[:query].present?
-      @syllabuses = @syllabuses.where(
-        "title ILIKE :query OR professor ILIKE :query",
-        query: "%#{params[:query]}%"
-      )
+      @syllabuses = @syllabuses.where("title LIKE ? OR content LIKE ?", "%#{params[:query]}%", "%#{params[:query]}%")
     end
     
-    # 大学が選択されている場合
     if params[:university_id].present?
       @syllabuses = @syllabuses.where(university_id: params[:university_id])
     end
     
     @syllabuses = @syllabuses.page(params[:page]).per(12)
+  end
+
+  # @description シラバス情報を自動取得するアクション
+  def scrape
+    url = params[:url]
     
-    respond_to do |format|
-      format.html
-      format.json { render json: @syllabuses }
+    unless url.present?
+      render json: { error: 'URLが指定されていません' }, status: :bad_request
+      return
+    end
+
+    begin
+      # サービスクラスを使用してスクレイピング実行（大学情報も渡す）
+      scraped_data = SyllabusScraperService.scrape(url, @university)
+      render json: { success: true, data: scraped_data }
+      
+    rescue SyllabusScraperService::ScrapingError => e
+      render json: { error: e.message }, status: :internal_server_error
+    rescue ArgumentError => e
+      render json: { error: e.message }, status: :bad_request
+    rescue => e
+      Rails.logger.error "Unexpected error in scrape action: #{e.message}"
+      render json: { error: "予期しないエラーが発生しました" }, status: :internal_server_error
     end
   end
 
@@ -74,7 +93,6 @@ class SyllabusesController < ApplicationController
   end
 
   def syllabus_params
-    params.require(:syllabus).permit(:title, :content, :faculty, :department, :course_name, :professor, :year, :semester, :credits)
+    params.require(:syllabus).permit(:title, :faculty_department, :course_number, :professor, :year, :semester, :day_period, :credits, :content, :url)
   end
-  
 end

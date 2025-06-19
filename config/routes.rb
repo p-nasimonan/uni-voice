@@ -3,10 +3,14 @@ Rails.application.routes.draw do
   get 'home/index'
   
   resources :universities do
-    resources :syllabuses
+    resources :syllabuses do
+      collection do
+        post :scrape
+      end
+    end
   end
   
-  get 'search', to: 'syllabuses#search', as: 'search_syllabuses'
+  get 'syllabuses/search', to: 'syllabuses#search', as: :search_syllabuses
   
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

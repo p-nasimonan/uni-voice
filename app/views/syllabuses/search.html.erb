@@ -56,8 +56,16 @@
             <h2 class="text-xl font-semibold mb-2"><%= syllabus.title %></h2>
             <p class="text-gray-600 mb-2"><%= syllabus.university.name %></p>
             <div class="text-sm text-gray-500 mb-4">
-              <p><%= syllabus.professor %> | <%= syllabus.credits %>単位</p>
-              <p><%= syllabus.faculty %> <%= syllabus.department %></p>
+              <p>
+                <%= syllabus.professor %> | 
+                <%= syllabus.semester %> | 
+                <%= syllabus.day_period %> | 
+                <%= syllabus.credits %>単位
+              </p>
+              <p><%= syllabus.faculty_department %></p>
+              <% if syllabus.course_number.present? %>
+                <p class="mt-1">科目番号: <%= syllabus.course_number %></p>
+              <% end %>
             </div>
             <%= link_to "詳細を見る", 
                 university_syllabus_path(syllabus.university, syllabus),
@@ -67,8 +75,8 @@
       </div>
 
       <%# ページネーション %>
-      <div class="mt-8">
-        <%= paginate @syllabuses, theme: 'tailwind' %>
+      <div class="mt-8 flex justify-center">
+        <%= paginate @syllabuses %>
       </div>
     <% else %>
       <%# 検索結果がない場合 %>
