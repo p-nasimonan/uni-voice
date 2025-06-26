@@ -1,26 +1,23 @@
-# README
+# UniVoice 大学の匿名掲示板
 
 [要件定義](要件定義.md)
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+以下のような開発手順で開発する予定  
+[開発手順](開発手順.md)
 
-Things you may want to cover:
+## 開発経緯（要約）
 
-* Ruby version
+### 経験
 
-* System dependencies
+- 大学入学後すぐに履修登録が始まるため、情報が足りないままシラバスだけで受講するかを判断することになり、後で後悔することもあった。
+- サークルに入ったことによって学生同士と繋がることができ、過去問や教科書について先輩と情報交換ができた。しかしもしサークルに入らなかったら情報交換はほぼ不可能であることに気づいた。
 
-* Configuration
+これらの経験から、サークルに入らなくても履修登録のコツ、過去問などの情報が共有できる仕組みができたら良いと考えた。
 
-* Database creation
+### 技術的な挑戦
 
-* Database initialization
+- 今までなるべくDBやバックエンドを触れないでフロントエンドだけを書いて楽をしていたが、SNSを作ることでバックエンドを理解したい
+- API設計したい
+- railsでdbを触りたいから
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+こういったバックエンド開発を経験するためにも開発してみようと考えた
