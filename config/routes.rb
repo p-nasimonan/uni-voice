@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  mount_avo
   root 'home#index'
   get 'home/index'
   

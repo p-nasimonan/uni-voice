@@ -45,6 +45,12 @@ gem "thruster", require: false
 # ページネーション
 gem 'kaminari'
 
+# 検索機能
+gem 'ransack'
+
+# 管理画面
+gem 'avo'
+
 # スクレイピング
 gem "nokogiri"
 
