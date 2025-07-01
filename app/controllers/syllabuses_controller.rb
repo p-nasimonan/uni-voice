@@ -57,8 +57,37 @@ class SyllabusesController < ApplicationController
 
   def search
     @universities = University.all.order(:name)
-    @q = Syllabus.ransack(params[:q])
-    @syllabuses = @q.result.includes(:university).page(params[:page]).per(12)
+
+    # 検索条件が何も指定されていない場合は空の結果を返す
+    # 空白のみの場合もチェック
+    query_blank = params[:query].blank? || params[:query].strip.blank?
+    university_blank = params[:university_id].blank?
+
+    if query_blank && university_blank
+      @syllabuses = Syllabus.none.page(params[:page]).per(12)
+      return
+    end
+
+    # 検索クエリを構築
+    @syllabuses = Syllabus.includes(:university)
+
+    # キーワード検索（講義名、教授名、内容で検索）
+    # 空白のみの場合は検索しない
+    if params[:query].present? && params[:query].strip.present?
+      query = "%#{params[:query].strip}%"
+      @syllabuses = @syllabuses.where(
+        "title ILIKE ? OR professor ILIKE ? OR content ILIKE ?",
+        query, query, query
+      )
+    end
+
+    # 大学で絞り込み
+    if params[:university_id].present?
+      @syllabuses = @syllabuses.where(university_id: params[:university_id])
+    end
+
+    # ページネーション
+    @syllabuses = @syllabuses.order(created_at: :desc).page(params[:page]).per(12)
   end
 
   # @description シラバス情報を自動取得するアクション

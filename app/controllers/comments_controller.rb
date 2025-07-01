@@ -129,8 +129,22 @@ class CommentsController < ApplicationController
   def handle_file_uploads
     return unless params[:files].present?
 
-    params[:files].each do |file|
-      @comment.attachments.create!(file: file)
+    Rails.logger.debug "DEBUG: params[:files] class: #{params[:files].class}"
+    Rails.logger.debug "DEBUG: params[:files] is_a?(Array): #{params[:files].is_a?(Array)}"
+
+    # params[:files] が配列の場合と単一ファイルの場合を処理
+    files_array = params[:files].is_a?(Array) ? params[:files] : [ params[:files] ]
+
+    Rails.logger.debug "DEBUG: files_array length: #{files_array.length}"
+
+    files_array.each do |uploaded_file|
+      next if uploaded_file.blank?
+      Rails.logger.debug "DEBUG: Processing file: #{uploaded_file.class}"
+
+      # Active Storage を使ってファイルをアタッチ
+      attachment = @comment.attachments.build
+      attachment.file.attach(uploaded_file)
+      attachment.save!
     end
   end
 
