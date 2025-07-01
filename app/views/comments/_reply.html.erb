@@ -1,0 +1,58 @@
+<div class="bg-gray-50 border border-gray-200 rounded-lg p-3">
+  <div class="flex items-center justify-between mb-2">
+    <div class="flex items-center space-x-2">
+      <div class="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center text-white text-xs font-medium">
+        <%= comment.display_name.first %>
+      </div>
+      <span class="text-sm font-medium text-gray-700"><%= comment.display_name %></span>
+    </div>
+    
+    <div class="text-xs text-gray-500">
+      <%= time_ago_in_words(comment.created_at) %>前
+      <% if comment.edited? %>
+        <span class="text-xs text-gray-400">（編集済み）</span>
+      <% end %>
+    </div>
+  </div>
+  
+  <div class="text-sm text-gray-900">
+    <% if comment.content.present? %>
+      <p class="whitespace-pre-wrap"><%= comment.content %></p>
+    <% end %>
+    
+    <!-- ファイル添付（返信にも対応） -->
+    <% if comment.attachments.any? %>
+      <div class="mt-2 space-y-1">
+        <% comment.attachments.each do |attachment| %>
+          <div class="flex items-center p-2 bg-white rounded border">
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-medium text-gray-700 truncate">
+                <%= attachment.filename %>
+              </p>
+              <p class="text-xs text-gray-500">
+                <%= attachment.human_file_size %>
+              </p>
+            </div>
+            <div class="ml-2">
+              <%= link_to "DL", attachment.file, 
+                  class: "text-xs text-blue-600 hover:text-blue-800",
+                  target: "_blank" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+  
+  <!-- 返信の編集・削除 -->
+  <% if comment.user == current_user %>
+    <div class="mt-2 flex items-center space-x-2 text-xs">
+      <%= link_to "編集", edit_university_syllabus_comment_path(@university, @syllabus, comment), 
+          class: "text-gray-500 hover:text-gray-700" %>
+      <%= link_to "削除", university_syllabus_comment_path(@university, @syllabus, comment), 
+          method: :delete,
+          confirm: "この返信を削除しますか？",
+          class: "text-red-500 hover:text-red-700" %>
+    </div>
+  <% end %>
+</div>

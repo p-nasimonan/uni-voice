@@ -1,18 +1,26 @@
 Rails.application.routes.draw do
   mount_avo
-  root 'home#index'
-  get 'home/index'
-  
+  root "home#index"
+  get "home/index"
+
+  # 認証関連のルーティング
+  get "/login", to: "sessions#new"
+  post "/login", to: "sessions#create"
+  delete "/logout", to: "sessions#destroy"
+  get "/signup", to: "users#new"
+  resources :users, except: [ :index ]
+
   resources :universities do
     resources :syllabuses do
+      resources :comments
       collection do
         post :scrape
       end
     end
   end
-  
-  get 'syllabuses/search', to: 'syllabuses#search', as: :search_syllabuses
-  
+
+  get "syllabuses/search", to: "syllabuses#search", as: :search_syllabuses
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

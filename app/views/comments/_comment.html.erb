@@ -1,0 +1,172 @@
+<div class="bg-white border border-gray-200 rounded-lg p-4 comment-item" data-comment-id="<%= comment.id %>">
+  <!-- コメントヘッダー -->
+  <div class="flex items-center justify-between mb-3">
+    <div class="flex items-center space-x-3">
+      <!-- ユーザー情報 -->
+      <div class="flex items-center space-x-2">
+        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+          <%= comment.display_name.first %>
+        </div>
+        <span class="font-medium text-gray-900"><%= comment.display_name %></span>
+      </div>
+      
+      <!-- コメントタイプバッジ -->
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+        <%= case comment.comment_type
+            when 'review' then 'bg-yellow-100 text-yellow-800'
+            when 'file_share' then 'bg-green-100 text-green-800'
+            when 'chat' then 'bg-blue-100 text-blue-800'
+            end %>">
+        <%= case comment.comment_type
+            when 'review' then 'レビュー'
+            when 'file_share' then 'ファイル共有'
+            when 'chat' then 'チャット'
+            end %>
+      </span>
+      
+      <!-- レビューの星評価 -->
+      <% if comment.review? && comment.rating.present? %>
+        <div class="flex items-center">
+          <% comment.rating.times do %>
+            <span class="text-yellow-400">★</span>
+          <% end %>
+          <% (5 - comment.rating).times do %>
+            <span class="text-gray-300">★</span>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    
+    <!-- 時間情報 -->
+    <div class="text-sm text-gray-500">
+      <%= time_ago_in_words(comment.created_at) %>前
+      <% if comment.edited? %>
+        <span class="text-xs text-gray-400">（編集済み）</span>
+      <% end %>
+    </div>
+  </div>
+  
+  <!-- コメント内容 -->
+  <div class="mb-3">
+    <% if comment.content.present? %>
+      <p class="text-gray-900 whitespace-pre-wrap"><%= comment.content %></p>
+    <% end %>
+    
+    <!-- ファイル添付 -->
+    <% if comment.attachments.any? %>
+      <div class="mt-3 space-y-2">
+        <% comment.attachments.each do |attachment| %>
+          <div class="flex items-center p-3 bg-gray-50 rounded-lg border">
+            <div class="flex-shrink-0 mr-3">
+              <span class="inline-flex items-center justify-center w-10 h-10 bg-blue-100 rounded-lg">
+                <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
+                </svg>
+              </span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-gray-900 truncate">
+                <%= attachment.filename %>
+              </p>
+              <p class="text-sm text-gray-500">
+                <%= attachment.human_file_size %>
+                <% if attachment.description.present? %>
+                  • <%= attachment.description %>
+                <% end %>
+              </p>
+            </div>
+            <div class="flex-shrink-0 ml-4">
+              <%= link_to "ダウンロード", attachment.file, 
+                  class: "text-blue-600 hover:text-blue-800 text-sm font-medium",
+                  target: "_blank" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+  
+  <!-- アクション -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+      <!-- 返信ボタン（レビュー以外） -->
+      <% if comment.can_have_replies? %>
+        <button type="button" class="text-sm text-gray-500 hover:text-gray-700 reply-btn" 
+                data-comment-id="<%= comment.id %>">
+          <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M7.707 3.293a1 1 0 010 1.414L5.414 7H11a7 7 0 017 7v2a1 1 0 11-2 0v-2a5 5 0 00-5-5H5.414l2.293 2.293a1 1 0 11-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+          </svg>
+          返信
+        </button>
+      <% end %>
+    </div>
+    
+    <!-- 編集・削除ボタン -->
+    <% if comment.user == current_user %>
+      <div class="flex items-center space-x-2">
+        <%= link_to "編集", edit_university_syllabus_comment_path(@university, @syllabus, comment), 
+            class: "text-sm text-gray-500 hover:text-gray-700" %>
+        <%= link_to "削除", university_syllabus_comment_path(@university, @syllabus, comment), 
+            method: :delete,
+            confirm: "このコメントを削除しますか？",
+            class: "text-sm text-red-500 hover:text-red-700" %>
+      </div>
+    <% end %>
+  </div>
+  
+  <!-- 返信フォーム（動的に表示） -->
+  <div class="reply-form mt-4 hidden" data-parent-id="<%= comment.id %>">
+    <%= form_with model: [@university, @syllabus, Comment.new], local: true, class: "space-y-3" do |form| %>
+      <%= form.hidden_field :parent_id, value: comment.id %>
+      <%= form.hidden_field :comment_type, value: comment.comment_type %>
+      
+      <%= form.text_area :content, rows: 3, 
+          class: "block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500",
+          placeholder: "返信を入力してください..." %>
+      
+      <div class="flex justify-end space-x-2">
+        <button type="button" class="cancel-reply px-3 py-1 text-sm text-gray-600 hover:text-gray-800">
+          キャンセル
+        </button>
+        <%= form.submit "返信", 
+            class: "px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700" %>
+      </div>
+    <% end %>
+  </div>
+  
+  <!-- 返信一覧 -->
+  <% if comment.replies.any? %>
+    <div class="mt-4 pl-8 border-l-2 border-gray-200 space-y-4">
+      <% comment.replies.order(:created_at).each do |reply| %>
+        <%= render 'comments/reply', comment: reply %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 返信ボタンの処理
+  document.querySelectorAll('.reply-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const commentId = this.dataset.commentId;
+      const replyForm = document.querySelector(`[data-parent-id="${commentId}"]`);
+      replyForm.classList.toggle('hidden');
+      
+      if (!replyForm.classList.contains('hidden')) {
+        const textarea = replyForm.querySelector('textarea');
+        textarea.focus();
+      }
+    });
+  });
+  
+  // キャンセルボタンの処理
+  document.querySelectorAll('.cancel-reply').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const form = this.closest('.reply-form');
+      form.classList.add('hidden');
+      form.querySelector('textarea').value = '';
+    });
+  });
+});
+</script>

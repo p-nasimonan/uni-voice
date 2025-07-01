@@ -1,0 +1,61 @@
+<div class="bg-white shadow rounded-lg p-6">
+  <h2 class="text-lg font-medium text-gray-900 mb-6">コメントを編集</h2>
+  
+  <%= form_with model: [@university, @syllabus, @comment], local: true, multipart: true, class: "space-y-4" do |form| %>
+    <% if @comment.review? %>
+      <!-- レビューの評価は編集不可 -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">評価（変更不可）</label>
+        <div class="flex items-center space-x-1">
+          <% @comment.rating.times do %>
+            <span class="text-yellow-400 text-xl">★</span>
+          <% end %>
+          <% (5 - @comment.rating).times do %>
+            <span class="text-gray-300 text-xl">★</span>
+          <% end %>
+        </div>
+      </div>
+      
+      <div>
+        <label class="flex items-center">
+          <%= form.check_box :is_anonymous, class: "mr-2" %>
+          <span class="text-sm text-gray-700">匿名で投稿</span>
+        </label>
+      </div>
+    <% end %>
+    
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">
+        <%= @comment.review? ? 'レビュー内容' : @comment.file_share? ? 'ファイルの説明' : 'メッセージ' %>
+      </label>
+      <%= form.text_area :content, rows: 6, 
+          class: "block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+    </div>
+    
+    <% if @comment.attachments.any? %>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">現在のファイル</label>
+        <div class="space-y-2">
+          <% @comment.attachments.each do |attachment| %>
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
+              <div class="flex items-center">
+                <span class="text-sm text-gray-900"><%= attachment.filename %></span>
+                <span class="ml-2 text-xs text-gray-500">(<%= attachment.human_file_size %>)</span>
+              </div>
+              <%= link_to "削除", "#", 
+                  class: "text-sm text-red-600 hover:text-red-800",
+                  onclick: "return confirm('このファイルを削除しますか？')" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+    
+    <div class="flex justify-end space-x-3">
+      <%= link_to "キャンセル", university_syllabus_comments_path(@syllabus.university, @syllabus, type: @comment.comment_type), 
+          class: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" %>
+      <%= form.submit "更新", 
+          class: "px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700" %>
+    </div>
+  <% end %>
+</div>

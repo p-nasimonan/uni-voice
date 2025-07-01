@@ -10,6 +10,18 @@ class SyllabusesController < ApplicationController
   end
 
   def show
+    @comments = @syllabus.comments.includes(:user, :attachments, :replies)
+    @active_tab = params[:type] || "review"
+
+    # 全てのコメントを取得してフロントエンドでフィルタリング
+    @all_comments = @comments.top_level.order(created_at: :desc).page(params[:page]).per(20)
+
+    # 各タブ用のコメントを個別に取得
+    @review_comments = @comments.reviews.order(created_at: :desc)
+    @file_share_comments = @comments.file_shares.top_level.order(created_at: :desc)
+    @chat_comments = @comments.chats.top_level.order(created_at: :desc)
+
+    @comment = Comment.new
   end
 
   def new

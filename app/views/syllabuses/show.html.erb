@@ -1,4 +1,4 @@
-<%# @fileoverview シラバス詳細表示画面 %>
+<%# @fileover シラバス詳細表示画面 %>
 <%# @description シラバスの詳細情報を表示します %>
 
 <div class="min-h-screen py-8">
@@ -12,7 +12,7 @@
           <div>
             <h1 class="text-3xl font-bold text-gray-900 mb-2"><%= @syllabus.title %></h1>
             <div class="flex items-center text-sm text-gray-600">
-              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="mr-1">
+              <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="mr-1">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
               </svg>
               <%= @university.name %>
@@ -25,7 +25,7 @@
                 class: "inline-flex items-center p-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors",
                 title: "編集" do %>
                 <p class="text-sm font-medium">編集</p>
-              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
               </svg>
             <% end %>
@@ -36,7 +36,7 @@
                 title: "削除",
                 data: { confirm: '本当に削除しますか？' } do %>
                 <p class="text-sm font-medium">削除</p>
-              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
               </svg>
             <% end %>
@@ -86,7 +86,7 @@
                 <p class="text-lg font-semibold text-gray-900">
                   シラバスを開く
                 </p>
-                  <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                   </svg>
               </div>
@@ -105,8 +105,304 @@
             </div>
           </div>
         </div>
+        
+        <!-- 評価とコメントセクション -->
+        <div class="mb-8">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-semibold text-gray-900">評価とコメント</h3>
+            <div class="flex items-center space-x-4">
+              <% if @syllabus.rating_count > 0 %>
+                <div class="flex items-center">
+                  <div class="flex items-center mr-2">
+                    <% @syllabus.average_rating.floor.times do %>
+                      <span class="text-yellow-400">★</span>
+                    <% end %>
+                    <% (5 - @syllabus.average_rating.floor).times do %>
+                      <span class="text-gray-300">★</span>
+                    <% end %>
+                  </div>
+                  <span class="text-sm text-gray-600">
+                    <%= @syllabus.average_rating %> / 5.0 (<%= @syllabus.rating_count %>件のレビュー)
+                  </span>
+                </div>
+              <% else %>
+                <span class="text-sm text-gray-500">まだレビューがありません</span>
+              <% end %>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button type="button" data-tab="review" 
+                class="tab-button bg-yellow-50 border border-yellow-200 rounded-lg p-4 hover:bg-yellow-100 transition-colors <%= 'ring-2 ring-yellow-500' if @active_tab == 'review' %>">
+              <div class="flex items-center mb-2">
+                <svg style="width: 16px; height: 16px;" class="text-yellow-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+                <h4 class="font-medium text-yellow-800">レビュー</h4>
+              </div>
+              <p class="text-sm text-yellow-700">この授業についてレビューを投稿・閲覧</p>
+            </button>
+            
+            <button type="button" data-tab="file_share" 
+                class="tab-button bg-green-50 border border-green-200 rounded-lg p-4 hover:bg-green-100 transition-colors <%= 'ring-2 ring-green-500' if @active_tab == 'file_share' %>">
+              <div class="flex items-center mb-2">
+                <svg style="width: 16px; height: 16px;" class="text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+                <h4 class="font-medium text-green-800">ファイル共有</h4>
+              </div>
+              <p class="text-sm text-green-700">資料やノートを共有・ダウンロード</p>
+            </button>
+            
+            <button type="button" data-tab="chat" 
+                class="tab-button bg-blue-50 border border-blue-200 rounded-lg p-4 hover:bg-blue-100 transition-colors <%= 'ring-2 ring-blue-500' if @active_tab == 'chat' %>">
+              <div class="flex items-center mb-2">
+                <svg style="width: 16px; height: 16px;" class="text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
+                </svg>
+                <h4 class="font-medium text-blue-800">チャット</h4>
+              </div>
+              <p class="text-sm text-blue-700">リアルタイムで質問・議論</p>
+            </button>
+          </div>
+        </div>
+
+        <!-- コメントセクション -->
+        <div class="mb-8">
+          <!-- 投稿フォーム -->
+          <div class="mb-8 bg-gray-50 p-4 rounded-lg">
+            <%= form_with model: [@university, @syllabus, @comment], local: true, multipart: true, class: "space-y-4" do |form| %>
+              <%= form.hidden_field :comment_type, value: @active_tab %>
+              
+              <div id="review-form" class="<%= 'hidden' unless @active_tab == 'review' %>">
+                <!-- レビュー投稿フォーム -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">評価</label>
+                  <div class="flex items-center space-x-2">
+                    <% (1..5).each do |rating| %>
+                      <label class="cursor-pointer">
+                        <%= form.radio_button :rating, rating, class: "sr-only rating-input" %>
+                        <span class="star text-2xl text-gray-300 hover:text-yellow-400" data-rating="<%= rating %>">★</span>
+                      </label>
+                    <% end %>
+                  </div>
+                </div>
+                
+                <div>
+                  <label class="flex items-center">
+                    <%= form.check_box :is_anonymous, class: "mr-2" %>
+                    <span class="text-sm text-gray-700">匿名で投稿</span>
+                  </label>
+                </div>
+              </div>
+              
+              <div id="file-share-form" class="<%= 'hidden' unless @active_tab == 'file_share' %>">
+                <!-- ファイル共有投稿フォーム -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">ファイル</label>
+                  <%= file_field_tag :files, multiple: true, accept: ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.txt,.csv", 
+                      class: "block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none" %>
+                  <p class="mt-1 text-sm text-gray-500">PDF, Word, Excel, PowerPoint, 画像ファイル等をアップロードできます（最大10MB）</p>
+                </div>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  <span id="content-label">
+                    <%= @active_tab == 'review' ? 'レビュー内容' : @active_tab == 'file_share' ? 'ファイルについての説明（任意）' : 'メッセージ' %>
+                  </span>
+                </label>
+                <%= form.text_area :content, rows: 4, 
+                    class: "block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500",
+                    placeholder: @active_tab == 'review' ? 'この授業についてのレビューを書いてください...' : 
+                                @active_tab == 'file_share' ? 'ファイルについての説明を書いてください...' : 
+                                'メッセージを入力してください...',
+                    id: "content-textarea" %>
+              </div>
+              
+              <div class="flex justify-end">
+                <%= form.submit @active_tab == 'review' ? 'レビューを投稿' : 
+                               @active_tab == 'file_share' ? 'ファイルを共有' : 
+                               'メッセージを送信', 
+                    class: "bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500",
+                    id: "submit-button" %>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- コメント一覧 -->
+          <div class="space-y-6">
+            <!-- レビューコメント -->
+            <div id="review-comments" class="<%= 'hidden' unless @active_tab == 'review' %>">
+              <% if @review_comments.any? %>
+                <% @review_comments.each do |comment| %>
+                  <%= render 'comments/comment', comment: comment %>
+                <% end %>
+              <% else %>
+                <div class="text-center py-12 text-gray-500">
+                  まだレビューがありません。最初のレビューを投稿してみませんか？
+                </div>
+              <% end %>
+            </div>
+            
+            <!-- ファイル共有コメント -->
+            <div id="file-share-comments" class="<%= 'hidden' unless @active_tab == 'file_share' %>">
+              <% if @file_share_comments.any? %>
+                <% @file_share_comments.each do |comment| %>
+                  <%= render 'comments/comment', comment: comment %>
+                <% end %>
+              <% else %>
+                <div class="text-center py-12 text-gray-500">
+                  まだファイルが共有されていません。最初のファイルを共有してみませんか？
+                </div>
+              <% end %>
+            </div>
+            
+            <!-- チャットコメント -->
+            <div id="chat-comments" class="<%= 'hidden' unless @active_tab == 'chat' %>">
+              <% if @chat_comments.any? %>
+                <% @chat_comments.each do |comment| %>
+                  <%= render 'comments/comment', comment: comment %>
+                <% end %>
+              <% else %>
+                <div class="text-center py-12 text-gray-500">
+                  まだメッセージがありません。最初のメッセージを送信してみませんか？
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
 
       </div>
     </div>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // タブ切り替え機能
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const reviewForm = document.getElementById('review-form');
+  const fileShareForm = document.getElementById('file-share-form');
+  const contentLabel = document.getElementById('content-label');
+  const contentTextarea = document.getElementById('content-textarea');
+  const submitButton = document.getElementById('submit-button');
+  const commentTypeInput = document.querySelector('input[name="comment[comment_type]"]');
+
+  tabButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const selectedTab = this.dataset.tab;
+      
+      // タブボタンのスタイル更新
+      tabButtons.forEach(btn => {
+        btn.classList.remove('ring-2', 'ring-yellow-500', 'ring-green-500', 'ring-blue-500');
+      });
+      
+      if (selectedTab === 'review') {
+        this.classList.add('ring-2', 'ring-yellow-500');
+      } else if (selectedTab === 'file_share') {
+        this.classList.add('ring-2', 'ring-green-500');
+      } else if (selectedTab === 'chat') {
+        this.classList.add('ring-2', 'ring-blue-500');
+      }
+      
+      // フォームの表示切り替え
+      reviewForm.classList.add('hidden');
+      fileShareForm.classList.add('hidden');
+      
+      // コメント表示の切り替え
+      document.getElementById('review-comments').classList.add('hidden');
+      document.getElementById('file-share-comments').classList.add('hidden');
+      document.getElementById('chat-comments').classList.add('hidden');
+      
+      if (selectedTab === 'review') {
+        reviewForm.classList.remove('hidden');
+        document.getElementById('review-comments').classList.remove('hidden');
+        contentLabel.textContent = 'レビュー内容';
+        contentTextarea.placeholder = 'この授業についてのレビューを書いてください...';
+        submitButton.textContent = 'レビューを投稿';
+      } else if (selectedTab === 'file_share') {
+        fileShareForm.classList.remove('hidden');
+        document.getElementById('file-share-comments').classList.remove('hidden');
+        contentLabel.textContent = 'ファイルの説明（任意）';
+        contentTextarea.placeholder = 'ファイルについての説明を書いてください...';
+        submitButton.textContent = 'ファイルを共有';
+      } else if (selectedTab === 'chat') {
+        document.getElementById('chat-comments').classList.remove('hidden');
+        contentLabel.textContent = 'メッセージ';
+        contentTextarea.placeholder = 'メッセージを入力してください...';
+        submitButton.textContent = 'メッセージを送信';
+      }
+      
+      // 隠しフィールドの値を更新
+      commentTypeInput.value = selectedTab;
+      
+      // URLパラメータを更新（ページリロードなし）
+      const url = new URL(window.location);
+      url.searchParams.set('type', selectedTab);
+      window.history.pushState({}, '', url.toString());
+    });
+  });
+
+  // 星評価の処理
+  const stars = document.querySelectorAll('.star');
+  const ratingInputs = document.querySelectorAll('.rating-input');
+  
+  stars.forEach((star, index) => {
+    star.addEventListener('click', function() {
+      const rating = this.dataset.rating;
+      ratingInputs[index].checked = true;
+      updateStars(rating);
+    });
+    
+    star.addEventListener('mouseover', function() {
+      const rating = this.dataset.rating;
+      updateStars(rating);
+    });
+  });
+  
+  document.querySelector('.space-y-4').addEventListener('mouseleave', function() {
+    const checkedInput = document.querySelector('.rating-input:checked');
+    if (checkedInput) {
+      updateStars(checkedInput.value);
+    } else {
+      updateStars(0);
+    }
+  });
+  
+  function updateStars(rating) {
+    stars.forEach((star, index) => {
+      if (index < rating) {
+        star.classList.remove('text-gray-300');
+        star.classList.add('text-yellow-400');
+      } else {
+        star.classList.remove('text-yellow-400');
+        star.classList.add('text-gray-300');
+      }
+    });
+  }
+
+  // 返信ボタンの処理
+  document.querySelectorAll('.reply-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const commentId = this.dataset.commentId;
+      const replyForm = document.querySelector(`[data-parent-id="${commentId}"]`);
+      replyForm.classList.toggle('hidden');
+      
+      if (!replyForm.classList.contains('hidden')) {
+        const textarea = replyForm.querySelector('textarea');
+        textarea.focus();
+      }
+    });
+  });
+  
+  // キャンセルボタンの処理
+  document.querySelectorAll('.cancel-reply').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const form = this.closest('.reply-form');
+      form.classList.add('hidden');
+      form.querySelector('textarea').value = '';
+    });
+  });
+});
+</script>
