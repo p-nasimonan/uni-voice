@@ -148,10 +148,24 @@ document.addEventListener('DOMContentLoaded', function() {
   const facultyDepartmentField = document.querySelector('input[name="syllabus[faculty_department]"]');
   const professorField = document.querySelector('input[name="syllabus[professor]"]');
   const yearField = document.querySelector('input[name="syllabus[year]"]');
-  const semesterField = document.querySelector('select[name="syllabus[semester]"]');
+  const semesterField = document.querySelector('input[name="syllabus[semester]"]');
   const dayPeriodField = document.querySelector('input[name="syllabus[day_period]"]');
   const creditsField = document.querySelector('input[name="syllabus[credits]"]');
   const contentField = document.querySelector('textarea[name="syllabus[content]"]');
+  
+  // デバッグ: 各要素が正しく取得できているか確認
+  console.log('Form fields found:', {
+    urlField: !!urlField,
+    titleField: !!titleField,
+    courseNumberField: !!courseNumberField,
+    facultyDepartmentField: !!facultyDepartmentField,
+    professorField: !!professorField,
+    yearField: !!yearField,
+    semesterField: !!semesterField,
+    dayPeriodField: !!dayPeriodField,
+    creditsField: !!creditsField,
+    contentField: !!contentField
+  });
   
   // URLフィールドの変更を監視
   urlField.addEventListener('input', function() {
@@ -184,18 +198,52 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
           if (data.success) {
-            // 取得したデータをフォームに設定
-            if (data.data.title) titleField.value = data.data.title;
-            if (data.data.course_number) courseNumberField.value = data.data.course_number;
-            if (data.data.faculty_department) facultyDepartmentField.value = data.data.faculty_department;
-            if (data.data.professor) professorField.value = data.data.professor;
-            if (data.data.year) yearField.value = data.data.year;
-            if (data.data.semester) semesterField.value = data.data.semester;
-            if (data.data.day_period) dayPeriodField.value = data.data.day_period;
-            if (data.data.credits) creditsField.value = data.data.credits;
-            if (data.data.content) contentField.value = data.data.content;
-            
-            alert('シラバス情報を自動取得しました。内容を確認してから投稿してください。');
+            try {
+              // 取得したデータをフォームに設定（要素が存在する場合のみ）
+              console.log('Received data:', data.data);
+              
+              if (data.data.title && titleField) {
+                titleField.value = data.data.title;
+                console.log('Set title:', data.data.title);
+              }
+              if (data.data.course_number && courseNumberField) {
+                courseNumberField.value = data.data.course_number;
+                console.log('Set course_number:', data.data.course_number);
+              }
+              if (data.data.faculty_department && facultyDepartmentField) {
+                facultyDepartmentField.value = data.data.faculty_department;
+                console.log('Set faculty_department:', data.data.faculty_department);
+              }
+              if (data.data.professor && professorField) {
+                professorField.value = data.data.professor;
+                console.log('Set professor:', data.data.professor);
+              }
+              if (data.data.year && yearField) {
+                yearField.value = data.data.year;
+                console.log('Set year:', data.data.year);
+              }
+              if (data.data.semester && semesterField) {
+                semesterField.value = data.data.semester;
+                console.log('Set semester:', data.data.semester);
+              }
+              if (data.data.day_period && dayPeriodField) {
+                dayPeriodField.value = data.data.day_period;
+                console.log('Set day_period:', data.data.day_period);
+              }
+              if (data.data.credits && creditsField) {
+                creditsField.value = data.data.credits;
+                console.log('Set credits:', data.data.credits);
+              }
+              if (data.data.content && contentField) {
+                contentField.value = data.data.content;
+                console.log('Set content (length):', data.data.content.length);
+              }
+              
+              alert('シラバス情報を自動取得しました。内容を確認してから投稿してください。');
+            } catch (error) {
+              console.error('Error setting form values:', error);
+              alert('フォームへの値設定でエラーが発生しました: ' + error.message);
+            }
           } else {
             alert('エラー: ' + (data.error || '不明なエラーが発生しました'));
           }

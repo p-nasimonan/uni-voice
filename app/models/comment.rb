@@ -30,7 +30,11 @@ class Comment < ApplicationRecord
   end
 
   def display_name
-    is_anonymous? ? "匿名ユーザー" : user.name
+    user.name == "ななし" ? "匿名ユーザー" : user.name
+  end
+
+  def is_anonymous?
+    user.name == "ななし"
   end
 
   def edited?

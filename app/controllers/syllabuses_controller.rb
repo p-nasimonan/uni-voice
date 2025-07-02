@@ -71,13 +71,13 @@ class SyllabusesController < ApplicationController
     # 検索クエリを構築
     @syllabuses = Syllabus.includes(:university)
 
-    # キーワード検索（講義名、教授名、内容で検索）
+    # キーワード検索（講義名のみで検索）
     # 空白のみの場合は検索しない
     if params[:query].present? && params[:query].strip.present?
       query = "%#{params[:query].strip}%"
       @syllabuses = @syllabuses.where(
-        "title ILIKE ? OR professor ILIKE ? OR content ILIKE ?",
-        query, query, query
+        "title ILIKE ?",
+        query
       )
     end
 

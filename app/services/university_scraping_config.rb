@@ -32,41 +32,52 @@ class UniversityScrapingConfig
     {
       title_selectors: [
         "#ctl00_phContents_Detail_dcl_lct_name_double_lblCategory",
+        "span[id*='dcl_lct_name_double_lblCategory']",
         ".ItemName_value span",
         "h1",
         ".title"
       ],
       content_selectors: [
         "#ctl00_phContents_Detail_dcl_outline_lblCategory",
+        "span[id*='dcl_outline_lblCategory']",
         ".syl_contents",
         ".ItemName span"
       ],
       faculty_department_selectors: [
         "#ctl00_phContents_Detail_dcl_fac_name_lblCategory",
+        "span[id*='dcl_fac_name_lblCategory']",
         ".ItemName_value span"
       ],
       course_number_selectors: [
         "#ctl00_phContents_Detail_dcl_num_cd_double_lblCategory",
+        "span[id*='dcl_num_cd_double_lblCategory']",
+        "#ctl00_phContents_Detail_dcl_syl_lct_cd_lblCategory",
+        "span[id*='dcl_syl_lct_cd_lblCategory']",
         ".ItemName_value span"
       ],
       professor_selectors: [
         "#ctl00_phContents_Detail_dcl_syl_staff_name_double_lblCategory",
+        "span[id*='dcl_syl_staff_name_double_lblCategory']",
         ".ItemName_value span"
       ],
       year_selectors: [
         "#ctl00_phContents_Detail_dcl_lct_year_lblCategory",
+        "span[id*='dcl_lct_year_lblCategory']",
         ".ItemName_value span"
       ],
       semester_selectors: [
         "#ctl00_phContents_Detail_dcl_term_name_lblCategory",
+        "span[id*='dcl_term_name_lblCategory']",
         ".ItemName_value span"
       ],
       day_period_selectors: [
         "#ctl00_phContents_Detail_dcl_day_period_lblCategory",
+        "span[id*='dcl_day_period_lblCategory']",
         ".ItemName_value span"
       ],
       credits_selectors: [
         "#ctl00_phContents_Detail_dcl_credits_lblCategory",
+        "span[id*='dcl_credits_lblCategory']",
         ".ItemName_value span"
       ],
       base_url: "https://portal.u-ryukyu.ac.jp",
